@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universe Love</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body, html { 
+            min-height: 100vh; 
+            margin: 0; 
+            overflow-y: auto; 
+        }
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: linear-gradient(125deg, #0f0c29, #302b63, #24243e, #8e2de2, #4a00e0);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            font-family: sans-serif;
+            padding: 20px 10px;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container { 
+            width: 100%;
+            max-width: 360px; 
+            height: auto;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.08); 
+            border-radius: 30px; 
+            text-align: center; 
+            padding: 20px; 
+            backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container::-webkit-scrollbar {
+            width: 4px;
+        }
+        .container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .btn-container { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; width: 100%; }
+        .btn { 
+            padding: 12px; border: none; border-radius: 15px; cursor: pointer; 
+            font-weight: bold; color: white; border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.5s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        #warning { color: #ffeb3b; font-size: 14px; margin: 8px 0; min-height: 20px; font-weight: bold; }
+        #page2 { display: none; }
+        img { width: 100%; max-height: 180px; object-fit: cover; border-radius: 20px; border: 2px solid rgba(255,255,255,0.3); }
+        .highlight { font-size: 20px; color: #ff79c6; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="page1">
+    <h3 style="color: white; margin-top: 0;">အဲ့ဘက်မှာ မိုးရွာလား?</h3>
+    <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnV3aGxicjIwM2s3N2o3cjB3aTRyZGR3dXc0ZTV5d3F4aG5oZ2RpayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/EOpZ7XsVfTN2E/giphy.gif" alt="Rain">
+    <div id="warning"></div>
+    <div class="btn-container" id="btnBox">
+        <button class="btn" style="background: rgba(231, 76, 60, 0.3);" onclick="handleWrong('မရွာဘူး')">မရွာဘူး</button>
+        <button class="btn" style="background: rgba(52, 152, 219, 0.3);" onclick="handleWrong('ရွာတယ်')">ရွာတယ်</button>
+        <button class="btn" style="background: rgba(155, 89, 182, 0.3);" onclick="nextPage('ချစ်တယ်')">ချစ်တယ်</button>
+        <button class="btn" style="background: rgba(46, 204, 113, 0.3);" onclick="handleWrong('မဖြေဘူး')">မဖြေဘူး</button>
+    </div>
+</div>
+
+<div class="container" id="page2">
+    <h3 style="color: white; margin-top: 0;">Yayy.... အဖြေရပြီဗျို့.......💜</h3>
+    <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMG5ibW54enVibHUwNGltcjJvdnA1YzJndW16cmdscTV2cWtkbXZxbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/11sBLVxNs7v6WA/giphy.gif" alt="Love">
+    <p style="color: white; margin: 10px 0 5px 0;">Picked - <span class="highlight" id="answerDisplay"></span></p>
+    <p style="color: white; margin-top: 0;">Ko Zwe က ချစ်တယ်တဲ့ဗျာ..ဖိတ်စာသွားရိုက်ထားလိုက်တော့မယ်ဗျို့ ..💜</p>
+    <audio controls style="width: 100%; margin-bottom: 10px;"><source src="https://www.image2url.com/r2/default/audio/1790834947282-55d40d17-4afe-4b90-99c1-cb2a5574caf6.mp3" type="audio/mpeg"></audio>
+    <button class="btn" style="background: rgba(255,255,255,0.3); width: 100%;" onclick="savePNG()">Download Card</button>
+</div>
+
+<script>
+    const warnings = ["သေချာပြီလား?", "နောက်တစ်ခါ ထပ်စဉ်းစားဦးလေ", "အဖြေမှန် ရှာကြည့်ပါဦး", "မဟုတ်သေးဘူးနော်", "ပြန်ရွေးပါဦး", "ဟင့်အင်း... အဲ့ဒါမဟုတ်ဘူး"];
+
+    const clickCounts = {
+        "မရွာဘူး": 0,
+        "ရွာတယ်": 0,
+        "မဖြေဘူး": 0,
+        "ချစ်တယ်": 0
+    };
+
+    // ထည့်သွင်းပေးထားသော Formspree Endpoint URL
+    const FORMSPREE_ENDPOINT = ""; 
+
+    function handleWrong(val) {
+        if (clickCounts.hasOwnProperty(val)) {
+            clickCounts[val]++;
+        }
+
+        document.getElementById('warning').innerText = warnings[Math.floor(Math.random() * warnings.length)];
+        const box = document.getElementById('btnBox');
+        const btns = Array.from(box.children);
+        btns.sort(() => Math.random() - 0.5);
+        btns.forEach(b => box.appendChild(b));
+    }
+
+    function nextPage(val) {
+        if (clickCounts.hasOwnProperty(val)) {
+            clickCounts[val]++;
+        }
+
+        // "ချစ်တယ်" ကို နှိပ်သည်နှင့် Formspree သို့ ချက်ချင်း ပို့မည်
+        sendToFormspree(val);
+
+        document.getElementById('page1').style.display = 'none';
+        document.getElementById('page2').style.display = 'flex';
+        document.getElementById('answerDisplay').innerText = val;
+    }
+
+    function sendToFormspree(finalAnswer) {
+        if (!FORMSPREE_ENDPOINT) return;
+
+        const payload = {
+            "Final Answer": finalAnswer,
+            "မရွာဘူး နှိပ်သည့်အကြိမ်": clickCounts["မရွာဘူး"],
+            "ရွာတယ် နှိပ်သည့်အကြိမ်": clickCounts["ရွာတယ်"],
+            "မဖြေဘူး နှိပ်သည့်အကြိမ်": clickCounts["မဖြေဘူး"],
+            "ချစ်တယ် နှိပ်သည့်အကြိမ်": clickCounts["ချစ်တယ်"],
+            "Submitted At": new Date().toLocaleString()
+        };
+
+        fetch(FORMSPREE_ENDPOINT, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Formspree သို့ အဖြေ အောင်မြင်စွာ ရောက်ရှိသွားပါပြီ။");
+            } else {
+                console.error("Formspree Error Status:", response.status);
+            }
+        })
+        .catch(error => {
+            console.error("Error sending to Formspree:", error);
+        });
+    }
+
+    function savePNG() {
+        const container = document.getElementById('page2');
+        
+        html2canvas(container, {
+            allowTaint: true,
+            useCORS: true,
+            width: container.offsetWidth,
+            height: container.offsetHeight,
+            windowWidth: container.offsetWidth,
+            windowHeight: container.offsetHeight,
+            scale: 2
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'full-page-card.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+</script>
+
+</body>
+</html>
